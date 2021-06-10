@@ -15,10 +15,8 @@ on:
 
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
-
-  api-test:
-  
-    runs-on:  ubuntu-latest
+  test-api:
+    runs-on: ubuntu-latest
     steps:
     # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
     - uses: actions/checkout@v2
@@ -28,37 +26,35 @@ jobs:
       uses: actions/setup-node@v1
       with: 
         node-version: '12.x'
-     
-   # Make directory to upload the test results
-    - name: Criando pasta para armazenador os artefatos do teste
-      run: mkdir -p artefatos
     
+    # Install the newman command line utility and also install the html extra reporter
+    - name: Install newman
+      run: |
+       npm install -g newman
+       npm install -g newman-reporter-htmlextra
     # Make directory to upload the test results
-    - name: Criando pasta para armazenador relatorio
-      run: mkdir -p relatorio
-      
+    - name: Make Directory for results
+      run: mkdir -p testResults
+
 
     # Run the POSTMAN collection
     - name: Run POSTMAN collection
       run: |
-       newman run SpaceX.postman_collection.json -e SpaceX.postman_environment.json -r cli,htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme  > testResults/runreport1.html
-
-
+       newman run SpaceX.postman_collection.json -e SpaceX.postman_environment.json -r htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme  > testResults/runreport1.html
     # Upload the contents of Test Results directory to workspace
     - name: Output the run Details
       uses: actions/upload-artifact@v2
       with: 
        name: RunReports
        path: testResults
-   
-    #deploy relatorio no github actions
-    - name: Deploy 🚀
+       
+    - name: Deploy relatorio no githubpages
       uses: JamesIves/github-pages-deploy-action@4.1.4
       with:
-        branch: gh-pages # The branch the action should deploy to.
-        folder: artefatos # The folder the action should deploy.
+          branch: gh-pages # The branch the action should deploy to.
+          folder: testResults
         
-        
-        
-        
-        
+
+    
+       
+       
