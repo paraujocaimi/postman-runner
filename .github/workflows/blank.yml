@@ -16,7 +16,7 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
 
-  config-ambiente:
+  api-test:
   
     runs-on:  ubuntu-latest
     steps:
@@ -28,14 +28,7 @@ jobs:
       uses: actions/setup-node@v1
       with: 
         node-version: '12.x'
-    
-  config-relatorio:
-  
-    runs-on:  ubuntu-latest
-    steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-  
+     
    # Make directory to upload the test results
     - name: Criando pasta para armazenador os artefatos do teste
       run: mkdir -p artefatos
@@ -44,25 +37,13 @@ jobs:
     - name: Criando pasta para armazenador relatorio
       run: mkdir -p relatorio
       
-  test-api:
-  
-    runs-on: ubuntu-latest
-    steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
 
     # Run the POSTMAN collection
     - name: Run POSTMAN collection
       run: |
        newman run SpaceX.postman_collection.json -e SpaceX.postman_environment.json -r cli,htmlextra --reporter-htmlextra-export testResults/htmlreport.html --reporter-htmlextra-darkTheme  > testResults/runreport1.html
 
-  salvando-artefatos:
-  
-    runs-on: ubuntu-latest
-    steps:
-    # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-    - uses: actions/checkout@v2
-    
+
     # Upload the contents of Test Results directory to workspace
     - name: Output the run Details
       uses: actions/upload-artifact@v2
@@ -70,18 +51,12 @@ jobs:
        name: RunReports
        path: testResults
    
-  gerando-relatorio:
-   
-      runs-on: ubuntu-latest
-      steps:
-      # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: actions/checkout@v2
-    
-      - name: Deploy 🚀
-        uses: JamesIves/github-pages-deploy-action@4.1.4
-        with:
-          branch: gh-pages # The branch the action should deploy to.
-          folder: artefatos # The folder the action should deploy.
+    #deploy relatorio no github actions
+    - name: Deploy 🚀
+      uses: JamesIves/github-pages-deploy-action@4.1.4
+      with:
+        branch: gh-pages # The branch the action should deploy to.
+        folder: artefatos # The folder the action should deploy.
         
         
         
